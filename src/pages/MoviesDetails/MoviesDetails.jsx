@@ -1,4 +1,4 @@
-import { useParams, Outlet, Link, useLocation } from 'react-router-dom';
+import { useParams, Outlet, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getMovieById } from '../../servises/API';
 import {
