@@ -10,7 +10,7 @@ const MoviesList = ({ movieList }) => {
   return (
     <List>
       {movieList &&
-        movieList.map(({ id, title, poster_path }) => (
+        movieList.map(({ id, title, poster_path, name }) => (
           <Item key={id}>
             <LinkStyled to={`/movies/${id}`} state={{ from: location }}>
               <Img
@@ -21,7 +21,7 @@ const MoviesList = ({ movieList }) => {
                 }
                 alt={title}
               />
-              <MoviesName>{title}</MoviesName>
+              <MoviesName>{title || name}</MoviesName>
             </LinkStyled>
           </Item>
         ))}

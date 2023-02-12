@@ -1,34 +1,45 @@
 import { getMovieReviews } from '../../servises/API';
 import { useEffect, useState } from 'react';
 import { Blockquote } from './Reviews.styled';
+import { useParams } from 'react-router-dom';
+import Notification from 'components/Notification/Notification';
 
 const Reviews = () => {
+  const { movieId } = useParams();
   const [movieReviews, setMovieReviews] = useState([]);
+  const [error, setError] = useState(false);
+
   useEffect(() => {
-    const movieReviewsId = JSON.parse(localStorage.getItem('savedMovie'));
     try {
-      getMovieReviews(movieReviewsId).then(reviews => setMovieReviews(reviews));
+      getMovieReviews(movieId).then(reviews => setMovieReviews(reviews));
     } catch {
-      console.log('error');
+      setError(true);
     }
-  }, []);
+  }, [movieId]);
+
   return (
     <>
-      {movieReviews.length > 0 ? (
-        <ul>
-          {movieReviews.map(({ id, author, content }) => {
-            return (
-              <li key={id}>
-                <Blockquote>
-                  <cite>Author: {author}</cite>
-                  <p>{content}</p>
-                </Blockquote>
-              </li>
-            );
-          })}
-        </ul>
+      {error ? (
+        <Notification message="Something went wrong..." />
       ) : (
-        <p>Review not found</p>
+        <>
+          {movieReviews.length > 0 ? (
+            <ul>
+              {movieReviews.map(({ id, author, content }) => {
+                return (
+                  <li key={id}>
+                    <Blockquote>
+                      <cite>Author: {author}</cite>
+                      <p>{content}</p>
+                    </Blockquote>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p>Review not found</p>
+          )}
+        </>
       )}
     </>
   );

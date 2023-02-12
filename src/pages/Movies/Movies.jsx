@@ -1,15 +1,14 @@
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { React, useState, useEffect } from 'react';
 import { getSearchMovies } from '../../servises/API';
 import { SearchContainer, Form, Input, Button, BtnIcon } from './Movies.styled';
+import Notification from 'components/Notification/Notification';
 
 import MoviesList from 'components/MoviesList/MoviesList';
 
 const Movies = () => {
-  const location = useLocation();
-
   const [searchMovie, setSearchMovie] = useState([]);
-
+  const [error, setError] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams({});
 
   const searchQuery = searchParams.get('query');
@@ -18,8 +17,11 @@ const Movies = () => {
     if (!searchQuery) {
       return;
     }
-
-    getSearchMovies(searchQuery).then(movies => setSearchMovie(movies));
+    try {
+      getSearchMovies(searchQuery).then(movies => setSearchMovie(movies));
+    } catch {
+      setError(true);
+    }
   }, [searchQuery]);
 
   const showMovies = e => {
@@ -37,16 +39,22 @@ const Movies = () => {
 
   return (
     <>
-      <SearchContainer>
-        <Form onSubmit={showMovies}>
-          <Input type="text" name="input" placeholder="Search movies" />
-          <Button type="submit">
-            <BtnIcon />
-          </Button>
-        </Form>
-      </SearchContainer>
+      {error ? (
+        <Notification message="Something went wrong..." />
+      ) : (
+        <>
+          <SearchContainer>
+            <Form onSubmit={showMovies}>
+              <Input type="text" name="input" placeholder="Search movies" />
+              <Button type="submit">
+                <BtnIcon />
+              </Button>
+            </Form>
+          </SearchContainer>
 
-      <MoviesList movieList={searchMovie} location={location} />
+          <MoviesList movieList={searchMovie} />
+        </>
+      )}
     </>
   );
 };
